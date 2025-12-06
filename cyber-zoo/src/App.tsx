@@ -3,31 +3,14 @@ import Dashboard from './pages/Dashboard';
 import EventLog from './components/EventLog/EventLog';
 import { EventProvider } from './context/EventContext';
 import './styles/global.scss';
+import {theme} from './theme';
 import { Box, CssBaseline } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-      main: '#00f3ff',
-    },
-    secondary: {
-      main: '#f50057',
-    },
-    background: {
-      default: '#0a0a0a',
-      paper: '#1f1f1f',
-    },
-  },
-  typography: {
-    fontFamily: 'Roboto, sans-serif',
-  },
-});
 
 const App: React.FC = () => {
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
       <EventProvider>
         <Box sx={{ display: 'flex' }}>       

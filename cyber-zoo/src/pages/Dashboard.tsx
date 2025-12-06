@@ -39,24 +39,85 @@ const Dashboard: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <header style={{ marginBottom: '2rem', borderBottom: '2px solid #00f3ff', paddingBottom: '1rem' }}>
-        <Typography variant="h3" component="h1" sx={{ fontFamily: 'Orbitron', color: '#fff' }}>
-          CyberZoo <span style={{ color: '#00f3ff' }}>2077</span> Dashboard
-        </Typography>
+      <header style={{ 
+        marginBottom: '3rem', 
+        borderBottom: '1px solid rgba(0, 243, 255, 0.3)', 
+        paddingBottom: '1rem',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end'
+      }}>
+        <div>
+          <Typography variant="overline" sx={{ color: '#00f3ff', letterSpacing: '3px' }}>
+            /// SYSTEM_READY
+          </Typography>
+          <Typography variant="h3" component="h1" sx={{ 
+            fontFamily: 'Orbitron', 
+            fontWeight: 700,
+            color: '#fff',
+            textShadow: '0 0 10px rgba(0, 243, 255, 0.5)'
+          }}>
+            CYBER<span style={{ color: '#00f3ff' }}>ZOO</span>_2077
+          </Typography>
+        </div>
+        
+        <div style={{ textAlign: 'right', opacity: 0.7 }}>
+          <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+            SECTOR: 7G
+          </Typography>
+          <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+            STATUS: ONLINE
+          </Typography>
+        </div>
       </header>
 
-      <Box sx={{ mb: 4 }}>
-        <FormControl variant="filled" sx={{ minWidth: 200, background: 'white', borderRadius: 1 }}>
-          <InputLabel id="species-select-label">Filter Species</InputLabel>
-          <Select
-            labelId="species-select-label"
-            value={filterSpecies}
-            onChange={handleFilterChange}
-          >
+      <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Typography variant="caption" sx={{ color: 'primary.main', fontFamily: 'monospace' }}>
+            [FILTER_PROTOCOL]
+          </Typography>
+
+          <FormControl variant="filled" sx={{ minWidth: 220 }}>
+            <InputLabel 
+              id="species-select-label"
+              sx={{ color: 'rgba(255,255,255,0.5)', '&.Mui-focused': { color: '#00f3ff' } }}
+            >
+              SELECT_SPECIES
+            </InputLabel>
+            <Select
+              labelId="species-select-label"
+              value={filterSpecies}
+              onChange={handleFilterChange}
+              sx={{
+                color: '#fff',
+                fontFamily: 'Orbitron',
+                clipPath: 'polygon(0 0, 100% 0, 100% 85%, 92% 100%, 0 100%)',
+              }}
+              MenuProps={{
+                PaperProps: {
+                  sx: {
+                    border: '1px solid #00f3ff',
+                    boxShadow: '0 0 15px rgba(0, 243, 255, 0.2)',
+                    '& .MuiMenuItem-root': {
+                      fontFamily: 'Rajdhani',
+                      '&:hover': {
+                        backgroundColor: 'rgba(0, 243, 255, 0.1)',
+                      },
+                      '&.Mui-selected': {
+                        backgroundColor: 'rgba(0, 243, 255, 0.2)',
+                        color: '#00f3ff',
+                        '&:hover': { backgroundColor: 'rgba(0, 243, 255, 0.3)' }
+                      }
+                    }
+                  }
+                }
+              }}
+            >
             <MenuItem value="All">All Species</MenuItem>
             <MenuItem value="CyberCat">CyberCat</MenuItem>
             <MenuItem value="RoboDog">RoboDog</MenuItem>
             <MenuItem value="MechaBird">MechaBird</MenuItem>
+            <MenuItem value="QuantumPanda">QuantumPanda</MenuItem>
+            <MenuItem value="NanoFox">NanoFox</MenuItem>
           </Select>
         </FormControl>
       </Box>
@@ -69,12 +130,30 @@ const Dashboard: React.FC = () => {
       >
         {loading ? (
           Array.from(new Array(3)).map((_, index) => (
-            <Box key={index}>
-              <Skeleton variant="rectangular" height={300} sx={{ bgcolor: 'grey.900', borderRadius: 2 }} />
-              <Box sx={{ pt: 0.5 }}>
-                <Skeleton width="60%" sx={{ bgcolor: 'grey.800' }} />
-                <Skeleton width="40%" sx={{ bgcolor: 'grey.800' }} />
-              </Box>
+            <Box 
+              key={index} 
+              sx={{ 
+                border: '1px solid #333', 
+                p: 2, 
+                borderRadius: 1,
+                background: 'rgba(255,255,255,0.02)'
+              }}
+            >
+              <Skeleton 
+                variant="circular" 
+                width={110} 
+                height={110} 
+                sx={{ mx: 'auto', mb: 2, bgcolor: 'rgba(0, 243, 255, 0.1)' }} 
+              />
+              
+              <Skeleton 
+                height={30} 
+                width="60%" 
+                sx={{ mx: 'auto', mb: 1, bgcolor: 'rgba(255,255,255,0.05)' }} 
+              />
+              
+              <Skeleton height={20} width="100%" sx={{ mb: 1, bgcolor: 'rgba(255,255,255,0.05)' }} />
+              <Skeleton height={20} width="80%" sx={{ bgcolor: 'rgba(255,255,255,0.05)' }} />
             </Box>
           ))
         ) : (
