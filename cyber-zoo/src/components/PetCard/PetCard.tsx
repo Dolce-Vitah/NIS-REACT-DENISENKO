@@ -158,6 +158,7 @@ const PetCard: React.FC<PetCardProps> = ({ initialData }) => {
 
   const moodColor = getMoodColor(state.mood);
   const isOffline = state.mood === 'offline';
+  const isGlitched = state.energy > 0 && state.energy < 20;
 
   return (
     <div
@@ -167,7 +168,7 @@ const PetCard: React.FC<PetCardProps> = ({ initialData }) => {
         boxShadow: isOffline ? 'none' : `0 0 15px ${moodColor}66`,
       }}
     >
-      <div className={styles.avatarWrapper}>
+      <div className={`${styles.avatarWrapper} ${isGlitched ? styles.glitchedAvatar : ''}`}>
         <img
           ref={avatarRef}
           src={state.avatar}

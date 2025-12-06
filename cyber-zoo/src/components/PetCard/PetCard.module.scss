@@ -35,6 +35,56 @@
   }
 }
 
+@mixin avatar-glitch {
+  position: relative;
+  
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: inherit; // Наследует фон
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  &::before {
+    left: 2px;
+    background-color: rgba(255, 0, 193, 0.5);
+    mix-blend-mode: multiply;
+    animation: glitch-anim-1 2s infinite linear alternate-reverse;
+  }
+
+  &::after {
+    left: -2px;
+    background-color: rgba(0, 255, 249, 0.5);
+    mix-blend-mode: multiply;
+    animation: glitch-anim-2 3s infinite linear alternate-reverse;
+  }
+}
+
+@keyframes glitch-anim-1 {
+  0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px, 1px); }
+  20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -1px); }
+  40% { clip-path: inset(40% 0 50% 0); transform: translate(-2px, 2px); }
+  60% { clip-path: inset(80% 0 5% 0); transform: translate(2px, -2px); }
+  80% { clip-path: inset(10% 0 70% 0); transform: translate(-1px, 1px); }
+  100% { clip-path: inset(30% 0 20% 0); transform: translate(1px, -1px); }
+}
+
+@keyframes glitch-anim-2 {
+  0% { clip-path: inset(10% 0 60% 0); transform: translate(2px, -1px); }
+  20% { clip-path: inset(30% 0 20% 0); transform: translate(-2px, 2px); }
+  40% { clip-path: inset(70% 0 10% 0); transform: translate(2px, -2px); }
+  60% { clip-path: inset(20% 0 50% 0); transform: translate(-1px, 1px); }
+  80% { clip-path: inset(50% 0 30% 0); transform: translate(1px, -1px); }
+  100% { clip-path: inset(0% 0 80% 0); transform: translate(-2px, 1px); }
+}
+
 .card {
   background: #1f1f1f;
   border: 1px solid #333333;
@@ -97,6 +147,16 @@
     object-fit: cover;
     border: 3px solid rgba(255, 255, 255, 0.12);
     transition: filter 0.3s ease, border-color 0.3s ease;
+    position: relative;
+    z-index: 1;
+  }
+
+  .glitchedAvatar {
+    @include avatar-glitch;
+    
+    .avatar {
+      filter: grayscale(100%) contrast(1.5) brightness(0.8);
+    }
   }
 
   .actions {
