@@ -6,4 +6,5 @@ export type PetAction =
   | { type: 'CHEER' }
   | { type: 'RESET'; payload: Pet }
   | { type: 'DECAY_ENERGY'; payload: number }
+  | { type: 'DECAY_HAPPINESS'; payload: number }
   | { type: 'SET_MOOD'; payload: Pet['mood'] };

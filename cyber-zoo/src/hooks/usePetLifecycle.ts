@@ -11,24 +11,45 @@ export const usePetLifecycle = (
     if (state.mood === 'offline') return;
 
     const timer = setInterval(() => {
-      dispatch({ type: 'DECAY_ENERGY', payload: 5 });
+      dispatch({ type: 'DECAY_ENERGY', payload: 4 });
+
     }, intervalSeconds * 1000);
 
     return () => clearInterval(timer);
   }, [state.mood, intervalSeconds, dispatch]);
 
   useEffect(() => {
-    if (state.energy <= 0 && state.mood !== 'offline') {
-      dispatch({ type: 'SET_MOOD', payload: 'offline' });
+    if (state.mood === 'offline') return;
+
+    const happinessTimer = setInterval(() => {
+      dispatch({ type: 'DECAY_HAPPINESS', payload: 5 });
+    }, intervalSeconds * 1000 * 2);
+
+    return () => clearInterval(happinessTimer);
+  }, [state.mood, intervalSeconds, dispatch]);
+
+  useEffect(() => {
+    let nextMood: Pet['mood'] = state.mood;
+
+    if (state.energy <= 0) {
+      nextMood = 'offline';
+    } else {
+      const lowEnergy = state.energy < 25;
+      const lowHappiness = state.happiness < 25;
+      const highEnergy = state.energy > 70;
+      const highHappiness = state.happiness > 70;
+
+      if (lowEnergy || lowHappiness) {
+        nextMood = 'sad';
+      } else if (highEnergy && highHappiness) {
+        nextMood = 'happy';
+      } else {
+        nextMood = 'neutral';
+      }
     }
-    else if (state.energy > 0 && state.energy <= 20 && state.mood !== 'sad') {
-      dispatch({ type: 'SET_MOOD', payload: 'sad' });
+
+    if (nextMood !== state.mood) {
+      dispatch({ type: 'SET_MOOD', payload: nextMood });
     }
-    else if (state.energy > 20 && state.energy <= 60 && state.mood !== 'neutral') {
-      dispatch({ type: 'SET_MOOD', payload: 'neutral' });
-    }
-    else if (state.energy > 60 && state.mood !== 'happy') {
-      dispatch({ type: 'SET_MOOD', payload: 'happy' });
-    }
-  }, [state.energy, state.mood, dispatch]);
+  }, [state.energy, state.happiness, state.mood, dispatch]);
 };
