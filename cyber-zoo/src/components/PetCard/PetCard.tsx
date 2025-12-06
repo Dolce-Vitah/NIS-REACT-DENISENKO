@@ -205,66 +205,34 @@ const PetCard: React.FC<PetCardProps> = ({ initialData }) => {
       </div>
 
       <div style={{ width: '100%', marginTop: '8px' }}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            fontSize: '0.8rem',
-            marginBottom: '4px',
-            color: '#cccccc',
-          }}
-        >
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '4px', color: '#888', fontFamily: 'monospace' }}>
           <span>ENERGY</span>
-          <span>{state.energy}%</span>
+          <span>{Math.round(state.energy)}%</span>
         </div>
-        <div
-          style={{
-            width: '100%',
-            height: '8px',
-            background: '#333333',
-            borderRadius: '4px',
-            overflow: 'hidden',
-          }}
-        >
+        <div className={styles.progressBarContainer}>
           <div
+            className={styles.progressBarFill}
             style={{
               width: `${state.energy}%`,
-              height: '100%',
               backgroundColor: moodColor,
-              transition: 'width 0.4s ease, background-color 0.4s ease',
+              boxShadow: `0 0 10px ${moodColor}`,
             }}
           />
         </div>
       </div>
 
       <div style={{ width: '100%', marginTop: '8px' }}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            fontSize: '0.8rem',
-            marginBottom: '4px',
-            color: '#cccccc',
-          }}
-        >
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '4px', color: '#888', fontFamily: 'monospace' }}>
           <span>HAPPINESS</span>
-          <span>{state.happiness}%</span>
+          <span>{Math.round(state.happiness)}%</span>
         </div>
-        <div
-          style={{
-            width: '100%',
-            height: '8px',
-            background: '#333333',
-            borderRadius: '4px',
-            overflow: 'hidden',
-          }}
-        >
+        <div className={styles.progressBarContainer}>
           <div
+            className={styles.progressBarFill}
             style={{
               width: `${state.happiness}%`,
-              height: '100%',
-              backgroundColor: '#ff85c0', 
-              transition: 'width 0.4s ease, background-color 0.4s ease',
+              backgroundColor: '#ff85c0',
+              boxShadow: `0 0 10px #ff85c0`,
             }}
           />
         </div>
