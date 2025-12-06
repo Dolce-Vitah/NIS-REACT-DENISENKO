@@ -5,6 +5,7 @@ import { useEventLog } from '../../hooks/useEventLog';
 import { ActionButton } from '../PetActions/ActionButton.styled';
 import styles from './PetCard.module.scss';
 import { type PetAction } from './types';
+import { getAvatarForPet } from '../../utils/getAvatarForPet';
 
 const petReducer: React.Reducer<Pet, PetAction> = (state, action) => {
   switch (action.type) {
@@ -88,6 +89,7 @@ const PetCard: React.FC<PetCardProps> = ({ initialData }) => {
 
   const color = getMoodColor(state.mood);
   const isOffline = state.mood === 'offline';
+  const avatarSrc = getAvatarForPet(state);
 
   return (
     <div 
@@ -97,7 +99,7 @@ const PetCard: React.FC<PetCardProps> = ({ initialData }) => {
       <div className={styles.avatarWrapper}>
         <img 
           ref={avatarRef}
-          src={state.avatar} 
+          src={avatarSrc} 
           alt={state.name} 
           style={{ filter: isOffline ? 'grayscale(100%)' : 'none', borderColor: color }}
         />
@@ -109,7 +111,6 @@ const PetCard: React.FC<PetCardProps> = ({ initialData }) => {
         <div style={{ color: color }}>STATUS: {state.mood.toUpperCase()}</div>
         <div>LEVEL: {state.level}</div>
         
-        {/* Inline Style Health Bar Requirement */}
         <div style={{ marginTop: '10px', width: '100%', background: '#333', height: '8px', borderRadius: '4px' }}>
             <div style={{
                 width: `${state.energy}%`,

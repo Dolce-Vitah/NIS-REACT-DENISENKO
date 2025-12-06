@@ -60,19 +60,11 @@ const Dashboard: React.FC = () => {
           </Select>
         </FormControl>
       </Box>
-
-      {/* 
-        Alternative to Grid: CSS Grid via Box
-        - display: 'grid'
-        - gridTemplateColumns: Defines responsive columns using repeat(auto-fill, minmax(...))
-        - gap: Space between items
-      */}
       <Box
         sx={{
           display: 'grid',
-          // Automatically fit as many columns as possible, min 300px wide
           gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-          gap: 3, // 3 * 8px = 24px gap
+          gap: 3, 
         }}
       >
         {loading ? (

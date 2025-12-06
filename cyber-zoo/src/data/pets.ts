@@ -1,11 +1,17 @@
+export type Species =
+  | 'CyberCat'
+  | 'RoboDog'
+  | 'MechaBird'
+  | 'NanoFox'
+  | 'QuantumPanda';
+
 export interface Pet {
   id: string;
   name: string;
-  species: 'CyberCat' | 'RoboDog' | 'MechaBird';
+  species: Species;
   mood: 'happy' | 'neutral' | 'sad' | 'offline';
   energy: number; // 0-100
   level: number;
-  avatar: string; // URL
 }
 
 export const MOCK_PETS: Pet[] = [
@@ -16,7 +22,6 @@ export const MOCK_PETS: Pet[] = [
     mood: 'neutral',
     energy: 80,
     level: 1,
-    avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=K1-TTY',
   },
   {
     id: '2',
@@ -25,7 +30,6 @@ export const MOCK_PETS: Pet[] = [
     mood: 'happy',
     energy: 95,
     level: 2,
-    avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=D0G-Z',
   },
   {
     id: '3',
@@ -34,6 +38,21 @@ export const MOCK_PETS: Pet[] = [
     mood: 'sad',
     energy: 40,
     level: 5,
-    avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=F3ATHER',
+  },
+  {
+    id: '4',
+    name: 'N4N0',
+    species: 'NanoFox',
+    mood: 'neutral',
+    energy: 65,
+    level: 3,
+  },
+  {
+    id: '5',
+    name: 'Q-PANDA',
+    species: 'QuantumPanda',
+    mood: 'happy',
+    energy: 90,
+    level: 4,
   },
 ];
