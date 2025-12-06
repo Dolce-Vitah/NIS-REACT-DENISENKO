@@ -12,6 +12,7 @@ import { useEventLog } from '../../hooks/useEventLog';
 import { ActionButton } from '../PetActions/ActionButton.styled';
 import styles from './PetCard.module.scss';
 import { type PetAction } from './types';
+import { savePetState, loadPetState, clearPetState } from '../../utils/storage';
 
 const petReducer: React.Reducer<Pet, PetAction> = (state, action) => {
   switch (action.type) {
@@ -51,8 +52,16 @@ interface PetCardProps {
   initialData: Pet;
 }
 
+const initPetState = (initialData: Pet): Pet => {
+  const saved = loadPetState(initialData.id);
+  if (saved) {
+    return saved;
+  }
+  return initialData;
+};
+
 const PetCard: React.FC<PetCardProps> = ({ initialData }) => {
-  const [state, dispatch] = useReducer(petReducer, initialData);
+  const [state, dispatch] = useReducer(petReducer, initialData, initPetState);
   const { addLog } = useEventLog();
 
   const avatarRef = useRef<HTMLImageElement | null>(null);
@@ -61,6 +70,10 @@ const PetCard: React.FC<PetCardProps> = ({ initialData }) => {
   const [cheerAnimating, setCheerAnimating] = useState(false);
 
   usePetLifecycle(state, dispatch);
+
+  useEffect(() => {
+    savePetState(state);
+  }, [state]);
 
   useEffect(() => {
     if (!avatarRef.current) return;
@@ -125,6 +138,7 @@ const PetCard: React.FC<PetCardProps> = ({ initialData }) => {
   }, [state.name, state.energy, addLog]);
 
   const handleReset = useCallback(() => {
+    clearPetState(initialData.id);
     dispatch({ type: 'RESET', payload: initialData });
     addLog(`🔄 Reset ${state.name}`, 'alert');
   }, [initialData, state.name, addLog]);

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useCallback,type  ReactNode } from 'react';
+import React, { createContext, useState, useCallback, useEffect, type ReactNode } from 'react';
 
 export interface LogEntry {
   id: string;
@@ -15,8 +15,26 @@ interface EventContextType {
 
 export const EventContext = createContext<EventContextType | undefined>(undefined);
 
+const STORAGE_KEY_LOGS = 'cyberzoo_logs';
+
 export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [logs, setLogs] = useState<LogEntry[]>(() => {
+    try {
+      const savedLogs = localStorage.getItem(STORAGE_KEY_LOGS);
+      return savedLogs ? JSON.parse(savedLogs) : [];
+    } catch (error) {
+      console.error('Failed to load logs from storage', error);
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(logs));
+    } catch (error) {
+      console.error('Failed to save logs to storage', error);
+    }
+  }, [logs]);
 
   const addLog = useCallback((message: string, type: LogEntry['type'] = 'info') => {
     const timestamp = new Date().toLocaleTimeString([], { hour12: false });
@@ -35,6 +53,7 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   const clearLogs = useCallback(() => {
     setLogs([]);
+    localStorage.removeItem(STORAGE_KEY_LOGS); 
   }, []);
 
   return (
