@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useGetProductByIdQuery } from '@/entities/Product/api/productApi';
 import { useAppTranslation } from '@/shared/lib/i18n/useAppTranslation';
 import { getErrorTranslationKey } from '@/shared/lib/rtkQuery/getErrorTranslationKey';
@@ -18,6 +18,17 @@ const ProductDetailsPage = () => {
 
   return (
     <article className="max-w-4xl ui-card p-6">
+      <nav aria-label={t('common.breadcrumbs', { defaultValue: 'Breadcrumbs' })} className="mb-4 text-sm">
+        <ol className="flex items-center gap-2 ui-muted">
+          <li>
+            <Link to="/products" className="ui-link">
+              {t('nav.products')}
+            </Link>
+          </li>
+          <li aria-hidden="true">/</li>
+          <li className="truncate max-w-[50vw]">{product.title}</li>
+        </ol>
+      </nav>
       <button
         onClick={() => navigate(-1)}
         className="mb-4 ui-link motion-safe:transition-transform motion-safe:active:scale-[0.99]"

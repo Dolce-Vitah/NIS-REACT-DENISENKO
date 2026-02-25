@@ -28,7 +28,9 @@
     "products": "Products",
     "profile": "Profile",
     "settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "sectionOperations": "Operations",
+    "sectionAccount": "Account"
   },
   "products": {
     "title": "Product Catalog",
@@ -38,7 +40,12 @@
     "price": "Price",
     "rating": "Rating",
     "search": "Search products...",
-    "empty": "No products found."
+    "empty": "No products found.",
+    "emptyDescription": "No products found matching your search criteria.",
+    "deleteSuccess": "Product deleted successfully",
+    "deleteError": "Failed to delete product",
+    "deleteConfirmTitle": "Delete this product?",
+    "deleteConfirmDescription": "The product \"{{title}}\" will be permanently removed."
   },
   "settings": {
     "theme": "Application Theme",
@@ -84,8 +91,12 @@
     "toggleSidebar": "Toggle sidebar",
     "loading": "Loading",
     "error": "An error occurred",
+    "actions": "Actions",
     "prev": "Previous",
     "next": "Next",
-    "back": "Back to list"
+    "back": "Back to list",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "breadcrumbs": "Breadcrumbs"
   }
 }

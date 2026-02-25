@@ -4,10 +4,8 @@ import { toast } from 'sonner';
 import { type RootState } from '@/app/store';
 import { setLanguage } from '@/entities/Settings/model/settingsSlice';
 import i18n from '@/shared/config/i18n/i18n';
-import { useAppTranslation } from '@/shared/lib/i18n/useAppTranslation';
 
 export const LangSwitcher = () => {
-  const { t } = useAppTranslation();
   const dispatch = useDispatch();
   const language = useSelector((state: RootState) => state.settings.language);
 

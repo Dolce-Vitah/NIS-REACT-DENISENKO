@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,6 +21,7 @@ const ProductsPage = () => {
   const { t } = useAppTranslation();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
 
   const initialQuery = searchParams.get('q') ?? '';
   const initialPageRaw = Number(searchParams.get('page') ?? '1');
@@ -28,6 +29,7 @@ const ProductsPage = () => {
 
   const [page, setPage] = useState(initialPage);
   const [searchTerm, setSearchTerm] = useState(initialQuery);
+  const [pendingDelete, setPendingDelete] = useState<{ id: number; title: string } | null>(null);
   
   const debouncedSearch = useDebounce(searchTerm, 500);
 
@@ -52,14 +54,40 @@ const ProductsPage = () => {
   const isLoading = isAllLoading || isSearchLoading;
   const requestError = isSearching ? searchError : allError;
 
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== '/') return;
+      const target = event.target as HTMLElement | null;
+      const isTypingTarget =
+        target?.tagName === 'INPUT' ||
+        target?.tagName === 'TEXTAREA' ||
+        target?.isContentEditable;
+      if (isTypingTarget) return;
+      event.preventDefault();
+      searchInputRef.current?.focus();
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
   const handleDelete = async (e: React.MouseEvent, id: number) => {
     e.stopPropagation();
+    const product = data?.products?.find((item) => item.id === id);
+    if (!product) return;
+    setPendingDelete({ id, title: product.title });
+  };
+
+  const confirmDelete = async () => {
+    if (!pendingDelete) return;
     try {
-      await deleteProduct({ id, limit, skip, q: isSearching ? debouncedSearch : undefined }).unwrap();
+      await deleteProduct({ id: pendingDelete.id, limit, skip, q: isSearching ? debouncedSearch : undefined }).unwrap();
       toast.success(t('products.deleteSuccess', { defaultValue: 'Product deleted successfully' }));
     } catch (err) {
       console.error('Failed to delete product', err);
       toast.error(t('products.deleteError', { defaultValue: 'Failed to delete product' }));
+    } finally {
+      setPendingDelete(null);
     }
   };
 
@@ -72,6 +100,7 @@ const ProductsPage = () => {
             {t('products.search')}
           </label>
           <input
+            ref={searchInputRef}
             id="products-search"
             type="search"
             placeholder={t('products.search')}
@@ -218,6 +247,54 @@ const ProductsPage = () => {
           {t('common.next')}
         </button>
       </nav>
+
+      <AnimatePresence>
+        {pendingDelete && (
+          <>
+            <motion.div
+              className="ui-modal-overlay z-40"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setPendingDelete(null)}
+            />
+            <motion.div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 12 }}
+            >
+              <div className="ui-modal w-full max-w-md p-5">
+                <h2 className="text-lg font-semibold ui-title mb-2">
+                  {t('products.deleteConfirmTitle', { defaultValue: 'Delete this product?' })}
+                </h2>
+                <p className="ui-muted text-sm mb-5">
+                  {t('products.deleteConfirmDescription', {
+                    defaultValue: 'The product "{{title}}" will be permanently removed.',
+                    title: pendingDelete.title,
+                  })}
+                </p>
+                <div className="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    className="ui-btn ui-btn-secondary"
+                    onClick={() => setPendingDelete(null)}
+                  >
+                    {t('common.cancel', { defaultValue: 'Cancel' })}
+                  </button>
+                  <button
+                    type="button"
+                    className="ui-btn ui-btn-primary"
+                    onClick={confirmDelete}
+                  >
+                    {t('common.delete', { defaultValue: 'Delete' })}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </section>
   );
 };

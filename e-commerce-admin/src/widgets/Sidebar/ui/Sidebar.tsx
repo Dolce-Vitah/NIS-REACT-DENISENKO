@@ -32,7 +32,24 @@ const SidebarContent = ({
   const collapsed = useSelector((s: RootState) => s.settings.sidebarCollapsed);
 
   const mkClassName = ({ isActive }: { isActive: boolean }) =>
-    `${isActive ? 'ui-nav-link ui-nav-link-active' : 'ui-nav-link'} motion-safe:hover:translate-x-0.5`;
+    `${isActive ? 'ui-nav-link ui-nav-link-active' : 'ui-nav-link'} ${
+      collapsed ? 'justify-center' : ''
+    } motion-safe:hover:translate-x-0.5`;
+
+  const renderNavLabel = (label: string) => (
+    <AnimatePresence mode="wait">
+      {!collapsed && (
+        <motion.span
+          initial={{ opacity: 0, width: 0 }}
+          animate={{ opacity: 1, width: 'auto' }}
+          exit={{ opacity: 0, width: 0 }}
+          className="whitespace-nowrap overflow-hidden"
+        >
+          {label}
+        </motion.span>
+      )}
+    </AnimatePresence>
+  );
 
   return (
     <>
@@ -62,99 +79,60 @@ const SidebarContent = ({
           </button>
         </header>
       )}
-      <nav className="flex-1" aria-label={t('app.title')}>
+      <nav className="flex-1 flex flex-col gap-4" aria-label={t('app.title')}>
+        {!collapsed && (
+          <p className="px-2 text-xs uppercase tracking-[0.12em] ui-muted">
+            {t('nav.sectionOperations', { defaultValue: 'Operations' })}
+          </p>
+        )}
         <ul className="flex flex-col gap-2">
           <li>
             <NavLink to="/" className={mkClassName} onClick={onNavigate} aria-label={t('nav.dashboard')} title={t('nav.dashboard')}>
               <IconLayout aria-hidden="true" className="shrink-0" />
-              <AnimatePresence mode="wait">
-                {!collapsed && (
-                  <motion.span
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: 'auto' }}
-                    exit={{ opacity: 0, width: 0 }}
-                    className="whitespace-nowrap overflow-hidden"
-                  >
-                    {t('nav.dashboard')}
-                  </motion.span>
-                )}
-              </AnimatePresence>
+              {renderNavLabel(t('nav.dashboard'))}
             </NavLink>
           </li>
           <li>
             <NavLink to="/products" className={mkClassName} onClick={onNavigate} aria-label={t('nav.products')} title={t('nav.products')}>
               <IconBox aria-hidden="true" className="shrink-0" />
-              <AnimatePresence mode="wait">
-                {!collapsed && (
-                  <motion.span
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: 'auto' }}
-                    exit={{ opacity: 0, width: 0 }}
-                    className="whitespace-nowrap overflow-hidden"
-                  >
-                    {t('nav.products')}
-                  </motion.span>
-                )}
-              </AnimatePresence>
+              {renderNavLabel(t('nav.products'))}
             </NavLink>
           </li>
+        </ul>
+        {!collapsed && (
+          <p className="px-2 text-xs uppercase tracking-[0.12em] ui-muted">
+            {t('nav.sectionAccount', { defaultValue: 'Account' })}
+          </p>
+        )}
+        <ul className="flex flex-col gap-2 mt-auto">
           <li>
             <NavLink to="/profile" className={mkClassName} onClick={onNavigate} aria-label={t('nav.profile')} title={t('nav.profile')}>
               <IconUser aria-hidden="true" className="shrink-0" />
-              <AnimatePresence mode="wait">
-                {!collapsed && (
-                  <motion.span
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: 'auto' }}
-                    exit={{ opacity: 0, width: 0 }}
-                    className="whitespace-nowrap overflow-hidden"
-                  >
-                    {t('nav.profile')}
-                  </motion.span>
-                )}
-              </AnimatePresence>
+              {renderNavLabel(t('nav.profile'))}
             </NavLink>
           </li>
           <li>
             <NavLink to="/settings" className={mkClassName} onClick={onNavigate} aria-label={t('nav.settings')} title={t('nav.settings')}>
               <IconSettings aria-hidden="true" className="shrink-0" />
-              <AnimatePresence mode="wait">
-                {!collapsed && (
-                  <motion.span
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: 'auto' }}
-                    exit={{ opacity: 0, width: 0 }}
-                    className="whitespace-nowrap overflow-hidden"
-                  >
-                    {t('nav.settings')}
-                  </motion.span>
-                )}
-              </AnimatePresence>
+              {renderNavLabel(t('nav.settings'))}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/logout"
+              onClick={onNavigate}
+              className={`ui-btn ui-btn-secondary w-full text-red-600 dark:text-red-400 border-red-200/70 dark:border-red-900/40 hover:bg-red-50/60 dark:hover:bg-red-900/20 ${
+                collapsed ? 'justify-center px-0' : 'justify-start'
+              }`}
+              aria-label={t('nav.logout')}
+              title={t('nav.logout')}
+            >
+              <IconLogout aria-hidden="true" className="shrink-0" />
+              {renderNavLabel(t('nav.logout'))}
             </NavLink>
           </li>
         </ul>
       </nav>
-      <NavLink
-        to="/logout"
-        onClick={onNavigate}
-        className="mt-auto ui-btn ui-btn-secondary w-full justify-center text-red-600 dark:text-red-400 border-red-200/70 dark:border-red-900/40 hover:bg-red-50/60 dark:hover:bg-red-900/20"
-        aria-label={t('nav.logout')}
-        title={t('nav.logout')}
-      >
-        <IconLogout aria-hidden="true" className="shrink-0" />
-        <AnimatePresence mode="wait">
-          {!collapsed && (
-            <motion.span
-              initial={{ opacity: 0, width: 0 }}
-              animate={{ opacity: 1, width: 'auto' }}
-              exit={{ opacity: 0, width: 0 }}
-              className="whitespace-nowrap overflow-hidden"
-            >
-              {t('nav.logout')}
-            </motion.span>
-          )}
-        </AnimatePresence>
-      </NavLink>
     </>
   );
 };

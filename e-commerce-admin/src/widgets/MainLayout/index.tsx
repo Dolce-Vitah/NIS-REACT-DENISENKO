@@ -1,5 +1,5 @@
-import { Outlet, useLocation } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useLocation, useOutlet } from 'react-router-dom';
+import { useEffect, useRef, useState, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sidebar } from '../Sidebar/ui/Sidebar';
 import { LangSwitcher } from '@/features/Settings/ui/LangSwitcher';
@@ -10,6 +10,7 @@ import { IconMenu } from '@/shared/ui/icons/AppIcons';
 const MainLayout = () => {
   const { t } = useAppTranslation();
   const location = useLocation();
+  const outlet = useOutlet();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const lastLocationKeyRef = useRef<string | null>(null);
 
@@ -23,6 +24,19 @@ const MainLayout = () => {
       return () => window.clearTimeout(id);
     }
   }, [isSidebarOpen, location.key, location.pathname, location.search]);
+
+  useEffect(() => {
+    if (!isSidebarOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isSidebarOpen]);
 
   return (
     <div className="relative h-screen overflow-hidden">
@@ -63,7 +77,9 @@ const MainLayout = () => {
                 transition={{ duration: 0.2, ease: 'easeOut' }}
                 className="h-full"
               >
-                <Outlet />
+                <Suspense fallback={<div className="p-6 ui-muted">{t('common.loading')}...</div>}>
+                  {outlet}
+                </Suspense>
               </motion.div>
             </AnimatePresence>
           </main>
