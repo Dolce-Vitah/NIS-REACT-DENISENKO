@@ -1,0 +1,102 @@
+{
+  "app": {
+    "title": "Admin Panel"
+  },
+  "auth": {
+    "loginTitle": "Sign In",
+    "registerTitle": "Create account",
+    "registerStub": "Registration is a UI stub (DummyJSON doesn't support full registration).",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Login",
+    "register": "Register",
+    "loading": "Loading...",
+    "error": "Invalid credentials",
+    "validationError": "Please enter a valid username and password.",
+    "tokenMissing": "Token was not returned by the server.",
+    "loggingOut": "Signing out...",
+    "noAccount": "Don't have an account?",
+    "goToRegister": "Register",
+    "haveAccount": "Already have an account?",
+    "goToLogin": "Sign in",
+    "loginSuccess": "Successfully logged in",
+    "logoutSuccess": "Successfully logged out"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "products": "Products",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout",
+    "sectionOperations": "Operations",
+    "sectionAccount": "Account"
+  },
+  "products": {
+    "title": "Product Catalog",
+    "id": "ID",
+    "name": "Name",
+    "category": "Category",
+    "price": "Price",
+    "rating": "Rating",
+    "search": "Search products...",
+    "empty": "No products found.",
+    "emptyDescription": "No products found matching your search criteria.",
+    "deleteSuccess": "Product deleted successfully",
+    "deleteError": "Failed to delete product",
+    "deleteConfirmTitle": "Delete this product?",
+    "deleteConfirmDescription": "The product \"{{title}}\" will be permanently removed."
+  },
+  "settings": {
+    "theme": "Application Theme",
+    "themeDark": "Dark theme",
+    "themeLight": "Light theme",
+    "language": "Language",
+    "languageChanged": "Language changed to English",
+    "itemsPerPage": "Products per page"
+  },
+  "dashboard": {
+    "admin": "Admin",
+    "welcome": "Welcome, {{name}}!",
+    "subtitle": "This is the e-commerce admin dashboard. Use the sidebar to navigate between sections.",
+    "cards": {
+      "orders": "Total orders",
+      "revenue": "Revenue",
+      "activeUsers": "Active users"
+    }
+  },
+  "profile": {
+    "avatarAlt": "User avatar"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "subtitle": "This page doesn’t exist or has been moved.",
+    "goHome": "Go to dashboard"
+  },
+  "errors": {
+    "network": "Network error. Please try again.",
+    "parse": "Server response parsing error.",
+    "unauthorized": "Unauthorized. Please sign in again.",
+    "forbidden": "Access denied.",
+    "notFound": "Resource not found.",
+    "server": "Server error. Please try again later.",
+    "request": "Request failed.",
+    "unknown": "Something went wrong."
+  },
+  "common": {
+    "skipToContent": "Skip to content",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "toggleTheme": "Toggle theme",
+    "toggleSidebar": "Toggle sidebar",
+    "loading": "Loading",
+    "error": "An error occurred",
+    "actions": "Actions",
+    "prev": "Previous",
+    "next": "Next",
+    "back": "Back to list",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "breadcrumbs": "Breadcrumbs"
+  }
+}
