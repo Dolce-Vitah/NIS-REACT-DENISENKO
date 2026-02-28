@@ -1,0 +1,51 @@
+:root {
+  --cyber-black: #050505;
+  --cyber-dark: #0a0a12;
+  --cyber-gray: #1f1f2e;
+  --neon-blue: #00f3ff;
+  --neon-pink: #ff00c1;
+  --neon-green: #0aff0a;
+}
+
+body {
+  margin: 0;
+  background-color: var(--cyber-black);
+  color: #e0e0e0;
+  font-family: 'Rajdhani', sans-serif;
+  overflow-x: hidden;
+  
+  background-image: 
+    linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center top;
+  min-height: 100vh;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.1) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.6;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--cyber-black);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--cyber-gray);
+  border: 1px solid var(--neon-blue);
+}
