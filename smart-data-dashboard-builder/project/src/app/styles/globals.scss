@@ -1,0 +1,59 @@
+@use './variables.scss' as v;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: Inter, Roboto, Arial, sans-serif;
+  background: #f5f7fb;
+  color: #1f2430;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-rows: v.$header-height 1fr;
+  height: 100%;
+}
+
+.app-main {
+  display: grid;
+  grid-template-columns: v.$sidebar-width 1fr v.$rightbar-width;
+  height: calc(100vh - v.$header-height);
+}
+
+.panel {
+  border-right: 1px solid v.$border-color;
+  background: white;
+  overflow: auto;
+}
+
+.panel--right {
+  border-right: none;
+  border-left: 1px solid v.$border-color;
+}
+
+.canvas {
+  background: v.$bg-muted;
+  padding: 16px;
+  overflow: auto;
+}
+
+.react-grid-layout {
+  min-height: 500px;
+}
+
+.react-grid-item > .react-resizable-handle {
+  opacity: 0.65;
+}
