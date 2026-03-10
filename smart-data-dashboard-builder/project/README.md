@@ -1,73 +1,105 @@
-# React + TypeScript + Vite
+# Smart Data Dashboard Builder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Конструктор аналитических дашбордов для CSV/JSON данных с режимами сборки и исследования, 2D/3D виджетами, фильтрами и локальным сохранением состояния.
 
-Currently, two official plugins are available:
+## Что умеет приложение
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Импорт данных из `CSV` и `JSON`.
+- Режимы работы: `Build`, `Analyze`, `Present`, `Discover` (роуты `/dashboard` и `/discover`).
+- Виджеты:
+  - 2D: `KPI`, `Table`, `Bar`, `Line`, `Pie`;
+  - 3D (Three.js): `3D Bar`, `3D Scatter`, `3D Surface`.
+- Глобальные фильтры и cross-filter взаимодействия.
+- Discover-функциональность:
+  - KQL-lite запросы;
+  - временной фильтр;
+  - таблица с сортировкой/пагинацией;
+  - статистика полей;
+  - сохраненные поиски.
+- Индивидуальные стили на уровне каждого виджета (включая палитру графиков).
+- Локализация интерфейса (`EN` / `RU`).
+- Экспорт:
+  - CSV (отфильтрованные данные),
+  - JSON (конфигурация),
+  - PNG / PDF.
 
-## React Compiler
+## Технологический стек
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- `React 19` + `TypeScript`
+- `Vite 7`
+- `Material UI` + `Sass`
+- `Zustand` (состояние и persist)
+- `Three.js` (3D визуализации)
+- `react-router-dom` (маршрутизация)
+- `@monaco-editor/react` (редактор запросов)
+- `Vitest` + `Testing Library`
+- `ESLint` + `Stylelint` + `Prettier`
 
-## Expanding the ESLint configuration
+## Запуск проекта
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Установить зависимости:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm ci
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Запустить dev-сервер:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+Собрать production-бандл:
+
+```bash
+npm run build
+```
+
+## Quality Gates
+
+- `npm run format:check` - проверка форматирования Prettier
+- `npm run lint` - проверка ESLint
+- `npm run lint:styles` - проверка Stylelint для SCSS
+- `npm run typecheck` - проверка типов TypeScript
+- `npm run test` - юнит-тесты
+- `npm run test:coverage` - юнит-тесты с покрытием
+- `npm run build` - production-сборка
+- `npm run check` - полный локальный quality gate
+
+## Поддерживаемые форматы данных
+
+- `CSV` с заголовком и минимум одной строкой данных
+- `JSON` в виде массива объектов
+
+## Структура проекта
+
+- `src/app` - провайдеры приложения, тема, глобальные стили
+- `src/entities` - доменные типы и модели
+- `src/features` - бизнес-фичи (импорт, фильтры, discover, export, persistence)
+- `src/shared` - переиспользуемые UI-компоненты и утилиты
+- `src/store` - Zustand-сторы
+- `src/widgets` - реализации виджетов и рендеринг
+
+## Сохранение данных
+
+Состояние дашборда сохраняется в `localStorage` под версионированным ключом и включает:
+
+- виджеты и лэйауты,
+- фильтры,
+- состояние Discover.
+
+При загрузке выполняется проверка структуры данных; поврежденные/невалидные payload безопасно отклоняются.
+
+## Решение проблем
+
+- **Ошибки сборки/типов после обновления зависимостей**: выполните `npm ci` для синхронизации `lockfile`.
+- **Не видно данных в предпросмотре**: проверьте расширение файла (`.csv` / `.json`) и наличие строк данных.
+- **Сохраненный дашборд не загружается**: выполните сброс состояния через UI и сохраните заново с актуальной схемой.
+
+## Документация для пользователя
+
+- Подробное руководство: `docs/user-guide.md`
+
+## Скриншот стартовой страницы
+
+![alt text](image.png)

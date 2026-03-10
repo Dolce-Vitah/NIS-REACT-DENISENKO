@@ -28,6 +28,21 @@ export function applyFilters(rows: DatasetRecord[], filters: GlobalFilter[]): Da
         const str = String(value ?? '');
         if (f.values.length > 0 && !f.values.includes(str)) return false;
       }
+
+      if (f.type === 'text') {
+        const str = String(value ?? '');
+        const lower = str.toLowerCase();
+        const expected = f.value.toLowerCase();
+        if (f.operator === 'isNull') {
+          if (str.trim() !== '') return false;
+        } else if (f.operator === 'contains') {
+          if (!lower.includes(expected)) return false;
+        } else if (f.operator === 'startsWith') {
+          if (!lower.startsWith(expected)) return false;
+        } else if (f.operator === 'equals') {
+          if (lower !== expected) return false;
+        }
+      }
     }
     return true;
   });

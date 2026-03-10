@@ -1,39 +1,52 @@
-import {
-  Box,
-  Button,
-  Divider,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  OutlinedInput,
-  Select,
-  Stack,
-  TextField,
-  Typography,
-  Chip,
-} from '@mui/material';
+import { Alert, Box, Button, Chip, Divider, Stack, Typography } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { useDataStore } from '../../../store/dataStore';
 import { useFiltersStore } from '../../../store/filtersStore';
+import type { TextOperator } from '../../../store/filtersStore';
 import { getUniqueValues } from '../lib/filterOptions';
+import { useFilterDraftImpact } from '../lib/useFilterDraftImpact';
+import { useI18n } from '../../../shared/i18n/useI18n';
+import { ActiveFiltersSection } from './filters-panel/ActiveFiltersSection';
+import { CategoryFilterSection } from './filters-panel/CategoryFilterSection';
+import { formatFilterLabel } from './filters-panel/formatters';
+import { NumberFilterSection } from './filters-panel/NumberFilterSection';
+import { SavedFilterSetsSection } from './filters-panel/SavedFilterSetsSection';
+import { TextFilterSection } from './filters-panel/TextFilterSection';
+import type { PanelMode } from './filters-panel/types';
 
-export function GlobalFiltersPanel() {
-  const rows = useDataStore((s) => s.rows);
-  const schema = useDataStore((s) => s.schema);
+export function GlobalFiltersPanel({ mode = 'basic' }: { mode?: PanelMode }) {
+  const { t } = useI18n();
+  const rows = useDataStore((state) => state.rows);
+  const schema = useDataStore((state) => state.schema);
 
-  const filters = useFiltersStore((s) => s.filters);
-  const upsertNumberRangeFilter = useFiltersStore((s) => s.upsertNumberRangeFilter);
-  const upsertCategoryFilter = useFiltersStore((s) => s.upsertCategoryFilter);
-  const removeFilter = useFiltersStore((s) => s.removeFilter);
-  const resetFilters = useFiltersStore((s) => s.resetFilters);
+  const filters = useFiltersStore((state) => state.filters);
+  const upsertNumberRangeFilter = useFiltersStore((state) => state.upsertNumberRangeFilter);
+  const upsertCategoryFilter = useFiltersStore((state) => state.upsertCategoryFilter);
+  const upsertTextFilter = useFiltersStore((state) => state.upsertTextFilter);
+  const removeFilter = useFiltersStore((state) => state.removeFilter);
+  const resetFilters = useFiltersStore((state) => state.resetFilters);
+  const savedSets = useFiltersStore((state) => state.savedSets);
+  const pinnedFields = useFiltersStore((state) => state.pinnedFields);
+  const togglePinnedField = useFiltersStore((state) => state.togglePinnedField);
+  const saveCurrentFilterSet = useFiltersStore((state) => state.saveCurrentFilterSet);
+  const applySavedFilterSet = useFiltersStore((state) => state.applySavedFilterSet);
+  const removeSavedFilterSet = useFiltersStore((state) => state.removeSavedFilterSet);
 
   const columns = schema?.columns ?? [];
-  const numberColumns = columns.filter((c) => c.type === 'number' || c.type === 'mixed');
-  const categoryColumns = columns.filter((c) => c.type === 'string' || c.type === 'mixed' || c.type === 'boolean');
+  const numberColumns = columns.filter(
+    (column) => column.type === 'number' || column.type === 'mixed'
+  );
+  const categoryColumns = columns.filter(
+    (column) => column.type === 'string' || column.type === 'mixed' || column.type === 'boolean'
+  );
+  const textColumns = columns.filter(
+    (column) => column.type === 'string' || column.type === 'mixed'
+  );
 
   const [numberField, setNumberField] = useState('');
   const [min, setMin] = useState<string>('');
   const [max, setMax] = useState<string>('');
+  const [numberOperator, setNumberOperator] = useState<'between' | 'isNull'>('between');
 
   const [categoryField, setCategoryField] = useState('');
   const categoryOptions = useMemo(
@@ -42,148 +55,127 @@ export function GlobalFiltersPanel() {
   );
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
 
+  const [textField, setTextField] = useState('');
+  const [textOperator, setTextOperator] = useState<TextOperator>('contains');
+  const [textValue, setTextValue] = useState('');
+  const [setName, setSetName] = useState('');
+
+  const draftImpactCount = useFilterDraftImpact(rows, filters, {
+    numberField,
+    numberOperator,
+    min,
+    max,
+    categoryField,
+    selectedValues,
+    textField,
+    textOperator,
+    textValue,
+  });
+
   return (
     <Box>
-      <Typography variant="subtitle1" fontWeight={700}>Global Filters</Typography>
+      <Typography variant="subtitle1" fontWeight={700}>
+        {t.filtersPanel.title}
+      </Typography>
       <Divider sx={{ my: 1.5 }} />
 
       {!schema ? (
         <Typography variant="body2" color="text.secondary">
-          Сначала загрузи данные.
+          {t.filtersPanel.uploadFirst}
         </Typography>
       ) : (
         <Stack spacing={2}>
-          <Box>
-            <Typography variant="subtitle2" mb={1}>Number range filter</Typography>
-            <Stack spacing={1}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Numeric field</InputLabel>
-                <Select
-                  label="Numeric field"
-                  value={numberField}
-                  onChange={(e) => setNumberField(String(e.target.value))}
-                >
-                  {numberColumns.map((c) => (
-                    <MenuItem key={c.key} value={c.key}>{c.key}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <Stack direction="row" spacing={1}>
-                <TextField
+          <Stack direction="row" spacing={1} flexWrap="wrap">
+            {filters.length === 0 ? (
+              <Chip size="small" label={t.filtersPanel.noActiveFilters} />
+            ) : (
+              filters.map((filter) => (
+                <Chip
+                  key={`${filter.field}-${filter.type}`}
                   size="small"
-                  label="Min"
-                  type="number"
-                  fullWidth
-                  value={min}
-                  onChange={(e) => setMin(e.target.value)}
+                  label={formatFilterLabel(filter)}
+                  onDelete={() => removeFilter(filter.field)}
                 />
-                <TextField
-                  size="small"
-                  label="Max"
-                  type="number"
-                  fullWidth
-                  value={max}
-                  onChange={(e) => setMax(e.target.value)}
-                />
-              </Stack>
+              ))
+            )}
+          </Stack>
+          <Alert severity="info">
+            {t.filtersPanel.impactPreview}: {draftImpactCount} / {rows.length} {t.filtersPanel.rows}
+          </Alert>
 
-              <Button
-                variant="outlined"
-                disabled={!numberField}
-                onClick={() =>
-                  upsertNumberRangeFilter(
-                    numberField,
-                    min === '' ? null : Number(min),
-                    max === '' ? null : Number(max)
-                  )
-                }
-              >
-                Apply numeric filter
-              </Button>
-            </Stack>
-          </Box>
+          <NumberFilterSection
+            mode={mode}
+            numberColumns={numberColumns}
+            numberField={numberField}
+            setNumberField={setNumberField}
+            min={min}
+            setMin={setMin}
+            max={max}
+            setMax={setMax}
+            numberOperator={numberOperator}
+            setNumberOperator={setNumberOperator}
+            onApply={() => {
+              if (mode === 'advanced' && numberOperator === 'isNull') {
+                upsertTextFilter(numberField, 'isNull', '');
+                return;
+              }
+              upsertNumberRangeFilter(
+                numberField,
+                min === '' ? null : Number(min),
+                max === '' ? null : Number(max)
+              );
+            }}
+          />
 
-          <Box>
-            <Typography variant="subtitle2" mb={1}>Category filter</Typography>
-            <Stack spacing={1}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Category field</InputLabel>
-                <Select
-                  label="Category field"
-                  value={categoryField}
-                  onChange={(e) => {
-                    setCategoryField(String(e.target.value));
-                    setSelectedValues([]);
-                  }}
-                >
-                  {categoryColumns.map((c) => (
-                    <MenuItem key={c.key} value={c.key}>{c.key}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <FormControl fullWidth size="small" disabled={!categoryField}>
-                <InputLabel>Values</InputLabel>
-                <Select
-                  multiple
-                  value={selectedValues}
-                  onChange={(e) => setSelectedValues(e.target.value as string[])}
-                  input={<OutlinedInput label="Values" />}
-                  renderValue={(selected) => (
-                    <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                      {selected.map((v) => <Chip key={v} label={v} size="small" />)}
-                    </Box>
-                  )}
-                >
-                  {categoryOptions.map((v) => (
-                    <MenuItem key={v} value={v}>{v}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <Button
-                variant="outlined"
-                disabled={!categoryField}
-                onClick={() => upsertCategoryFilter(categoryField, selectedValues)}
-              >
-                Apply category filter
-              </Button>
-            </Stack>
-          </Box>
+          <CategoryFilterSection
+            categoryColumns={categoryColumns}
+            categoryField={categoryField}
+            setCategoryField={setCategoryField}
+            categoryOptions={categoryOptions}
+            selectedValues={selectedValues}
+            setSelectedValues={setSelectedValues}
+            onApply={() => upsertCategoryFilter(categoryField, selectedValues)}
+          />
+          {mode === 'advanced' && (
+            <TextFilterSection
+              textColumns={textColumns}
+              textField={textField}
+              setTextField={setTextField}
+              textOperator={textOperator}
+              setTextOperator={setTextOperator}
+              textValue={textValue}
+              setTextValue={setTextValue}
+              onApply={() => upsertTextFilter(textField, textOperator, textValue)}
+            />
+          )}
 
           <Divider />
+          {mode === 'advanced' && (
+            <SavedFilterSetsSection
+              setName={setName}
+              setSetName={setSetName}
+              filters={filters}
+              savedSets={savedSets}
+              onSave={() => {
+                saveCurrentFilterSet(setName.trim());
+                setSetName('');
+              }}
+              onApply={applySavedFilterSet}
+              onRemove={removeSavedFilterSet}
+            />
+          )}
+          {mode === 'advanced' && <Divider />}
 
-          <Box>
-            <Typography variant="subtitle2" mb={1}>Active filters</Typography>
-            <Stack spacing={1}>
-              {filters.length === 0 && (
-                <Typography variant="body2" color="text.secondary">
-                  Нет активных фильтров.
-                </Typography>
-              )}
-              {filters.map((f) => (
-                <Stack
-                  key={f.field}
-                  direction="row"
-                  justifyContent="space-between"
-                  alignItems="center"
-                >
-                  <Typography variant="caption">
-                    {f.type === 'number-range'
-                      ? `${f.field}: [${f.min ?? '-∞'} .. ${f.max ?? '+∞'}]`
-                      : `${f.field}: ${f.values.length ? f.values.join(', ') : '(all)'}`}
-                  </Typography>
-                  <Button size="small" color="error" onClick={() => removeFilter(f.field)}>
-                    remove
-                  </Button>
-                </Stack>
-              ))}
-            </Stack>
-          </Box>
+          <ActiveFiltersSection
+            mode={mode}
+            filters={filters}
+            pinnedFields={pinnedFields}
+            onTogglePin={togglePinnedField}
+            onRemove={removeFilter}
+          />
 
           <Button color="error" onClick={resetFilters}>
-            Reset all filters
+            {t.filtersPanel.resetAll}
           </Button>
         </Stack>
       )}

@@ -28,7 +28,9 @@ export function ThemeToggle() {
             position: 'absolute',
             display: 'grid',
             placeItems: 'center',
-            transform: isDark ? 'translateY(14px) scale(.6) rotate(-20deg)' : 'translateY(0) scale(1)',
+            transform: isDark
+              ? 'translateY(14px) scale(.6) rotate(-20deg)'
+              : 'translateY(0) scale(1)',
             opacity: isDark ? 0 : 1,
             transition: 'all .3s ease',
           }}
@@ -40,7 +42,9 @@ export function ThemeToggle() {
             position: 'absolute',
             display: 'grid',
             placeItems: 'center',
-            transform: isDark ? 'translateY(0) scale(1)' : 'translateY(-14px) scale(.6) rotate(20deg)',
+            transform: isDark
+              ? 'translateY(0) scale(1)'
+              : 'translateY(-14px) scale(.6) rotate(20deg)',
             opacity: isDark ? 1 : 0,
             transition: 'all .3s ease',
           }}

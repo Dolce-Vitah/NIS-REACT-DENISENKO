@@ -20,9 +20,15 @@ export function groupSum(
 
   rows.forEach((r) => {
     const label = String(r[categoryField] ?? 'N/A');
-    const val = asNumber(r[valueField]) ?? 0;
+    const val = asNumber(r[valueField]);
+    if (val === null) return;
     map.set(label, (map.get(label) ?? 0) + val);
   });
 
   return [...map.entries()].map(([label, value]) => ({ label, value }));
+}
+
+export function hasNumericValues(rows: DatasetRecord[], valueField?: string): boolean {
+  if (!valueField) return false;
+  return rows.some((row) => asNumber(row[valueField]) !== null);
 }

@@ -20,7 +20,8 @@ export function ModeTransitionVeil({ transitionKey }: Props) {
           inset: 0,
           zIndex: 20,
           backdropFilter: 'none',
-          background: 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
+          background:
+            'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
           borderRadius: 'inherit',
         }}
       />

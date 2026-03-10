@@ -2,10 +2,17 @@ import { Box, Typography } from '@mui/material';
 import type { LineWidgetConfig } from '../../entities/widget/types';
 import type { DatasetRecord } from '../../entities/dataset/types';
 import { asNumber } from '../lib/chartData';
+import { useI18n } from '../../shared/i18n/useI18n';
 
 export function LineWidget({ config, rows }: { config: LineWidgetConfig; rows: DatasetRecord[] }) {
+  const { language } = useI18n();
+  const ru = language === 'ru';
   if (!config.xField || !config.yField) {
-    return <Typography color="text.secondary">Select X/Y fields</Typography>;
+    return (
+      <Typography color="text.secondary">
+        {ru ? 'Выберите поля X/Y' : 'Select X/Y fields'}
+      </Typography>
+    );
   }
 
   const points = rows
@@ -13,7 +20,12 @@ export function LineWidget({ config, rows }: { config: LineWidgetConfig; rows: D
     .map((r) => ({ x: String(r[config.xField!]), y: asNumber(r[config.yField!]) }))
     .filter((p) => p.y !== null) as Array<{ x: string; y: number }>;
 
-  if (!points.length) return <Typography color="text.secondary">No numeric Y values</Typography>;
+  if (!points.length)
+    return (
+      <Typography color="text.secondary">
+        {ru ? 'Нет числовых значений по оси Y' : 'No numeric Y values'}
+      </Typography>
+    );
 
   const w = 320;
   const h = 120;
@@ -32,7 +44,7 @@ export function LineWidget({ config, rows }: { config: LineWidgetConfig; rows: D
   return (
     <Box>
       <svg width="100%" viewBox={`0 0 ${w} ${h}`}>
-        <polyline fill="none" stroke="#1976d2" strokeWidth="2.5" points={poly} />
+        <polyline fill="none" stroke="var(--gpv2-chart-line)" strokeWidth="2.5" points={poly} />
       </svg>
     </Box>
   );

@@ -1,5 +1,5 @@
 export type WidgetLayout = {
-  i: string; 
+  i: string;
   x: number;
   y: number;
   w: number;
