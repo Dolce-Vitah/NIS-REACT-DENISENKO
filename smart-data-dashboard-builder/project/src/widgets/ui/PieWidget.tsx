@@ -13,15 +13,14 @@ export function PieWidget({ config, rows }: { config: PieWidgetConfig; rows: Dat
     return <Typography color="text.secondary">Select category/value fields</Typography>;
   }
 
-  let acc = 0;
   const radius = 50;
   const cx = 60;
   const cy = 60;
 
   const arcs = data.map((d, i) => {
-    const start = (acc / total) * Math.PI * 2;
-    acc += d.value;
-    const end = (acc / total) * Math.PI * 2;
+    const startValue = data.slice(0, i).reduce((s, p) => s + p.value, 0);
+    const start = (startValue / total) * Math.PI * 2;
+    const end = ((startValue + d.value) / total) * Math.PI * 2;
 
     const x1 = cx + radius * Math.cos(start);
     const y1 = cy + radius * Math.sin(start);
@@ -38,12 +37,12 @@ export function PieWidget({ config, rows }: { config: PieWidgetConfig; rows: Dat
     <Stack direction="row" spacing={2} alignItems="center">
       <Box>
         <svg width="120" height="120" viewBox="0 0 120 120">
-          {arcs.map((a, i) => <path key={i} d={a.path} fill={a.color} />)}
+          {arcs.map((a) => <path key={a.label} d={a.path} fill={a.color} />)}
         </svg>
       </Box>
       <Stack spacing={0.5}>
-        {arcs.map((a, i) => (
-          <Stack key={i} direction="row" spacing={1} alignItems="center">
+        {arcs.map((a) => (
+          <Stack key={a.label} direction="row" spacing={1} alignItems="center">
             <Box sx={{ width: 10, height: 10, bgcolor: a.color, borderRadius: '2px' }} />
             <Typography variant="caption">
               {a.label}: {a.value.toFixed(1)}

@@ -33,7 +33,9 @@ export function ThreeBarWidget({
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(width, height);
-    mount.innerHTML = '';
+    while (mount.firstChild) {
+      mount.removeChild(mount.firstChild);
+    }
     mount.appendChild(renderer.domElement);
 
     const ambient = new THREE.AmbientLight(0xffffff, 0.8);
@@ -93,8 +95,11 @@ export function ThreeBarWidget({
       plane.geometry.dispose();
       (plane.material as THREE.Material).dispose();
 
+      barMaterial.dispose();
       renderer.dispose();
-      mount.innerHTML = '';
+      if (mount.contains(renderer.domElement)) {
+        mount.removeChild(renderer.domElement);
+      }
     };
   }, [rows, config.categoryField, config.valueField]);
 

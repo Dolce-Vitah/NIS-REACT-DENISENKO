@@ -1,6 +1,6 @@
 import { Box, Paper, Tabs, Tab, Divider, Stack, Chip } from '@mui/material';
 import GridLayoutLib from 'react-grid-layout';
-import type { Layout } from 'react-grid-layout';
+import type { Layout, ReactGridLayoutProps } from 'react-grid-layout';
 import { useMemo, useState } from 'react';
 import { useDashboardStore } from '../../store/dashboardStore';
 import { useDataStore } from '../../store/dataStore';
@@ -12,7 +12,7 @@ import { DataPreviewTable } from '../../features/data-import/ui/DataPreviewTable
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
-const GridLayout = GridLayoutLib as unknown as React.ComponentType<any>;
+const GridLayout = GridLayoutLib as React.ComponentType<ReactGridLayoutProps>;
 type CanvasTab = 'dashboard' | 'preview';
 
 export function Canvas() {
@@ -30,7 +30,7 @@ export function Canvas() {
   const filters = useFiltersStore((s) => s.filters);
   const filteredRows = useMemo(() => applyFilters(rows, filters), [rows, filters]);
 
-  const layout = useMemo<Layout>(
+  const layout = useMemo<Layout[]>(
     () => layoutsStore.map((l) => ({ i: l.i, x: l.x, y: l.y, w: l.w, h: l.h, minW: l.minW, minH: l.minH })),
     [layoutsStore]
   );
@@ -69,7 +69,7 @@ export function Canvas() {
                   width={980}
                   margin={[12, 12]}
                   draggableHandle=".widget-drag-handle"
-                  onLayoutChange={(nextLayout: Layout) => {
+                  onLayoutChange={(nextLayout: Layout[]) => {
                     const normalized = nextLayout.map((l) => ({
                       i: l.i, x: l.x, y: l.y, w: l.w, h: l.h, minW: l.minW, minH: l.minH,
                     }));

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { type Movie } from './types/types';
 import { initialMovies } from './data/movies';
 import MovieList from './components/MovieList';
@@ -31,8 +31,6 @@ const App: React.FC = () => {
     return localStorage.getItem('search') || '';
   });
 
-  const searchRef = useRef<HTMLInputElement | null>(null);
-
   useEffect(() => {
     localStorage.setItem('movies', JSON.stringify(movies));
   }, [movies]);
@@ -53,10 +51,6 @@ const App: React.FC = () => {
     setMovies(prev =>
       prev.map(m => (m.id === id ? { ...m, isFavorite: !m.isFavorite } : m))
     );
-  };
-
-  const handleSearch = () => {
-    setSearchQuery(searchRef.current?.value || '');
   };
 
   const filtered = movies.filter(m => {
@@ -88,10 +82,9 @@ const App: React.FC = () => {
           </div>
 
           <input
-            ref={searchRef}
             value={searchQuery}
             placeholder="Поиск по названию"
-            onChange={handleSearch}
+            onChange={(e) => setSearchQuery(e.target.value)}
             list="movies-list"
           />
 
