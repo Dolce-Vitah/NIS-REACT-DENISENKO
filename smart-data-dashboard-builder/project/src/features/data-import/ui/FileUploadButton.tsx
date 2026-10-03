@@ -1,4 +1,5 @@
 import { Button } from '@mui/material';
+import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import { type ChangeEvent } from 'react';
 import { importDataFromFile } from '../model/importData';
 import { useDataStore } from '../../../store/dataStore';
@@ -8,7 +9,6 @@ export function FileUploadButton() {
   const setLoading = useDataStore((s) => s.setLoading);
   const setData = useDataStore((s) => s.setData);
   const setError = useDataStore((s) => s.setError);
-
   const showNotification = useUiStore((s) => s.showNotification);
 
   const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -30,8 +30,8 @@ export function FileUploadButton() {
   };
 
   return (
-    <Button variant="outlined" component="label">
-      Upload Data
+    <Button variant="outlined" component="label" startIcon={<CloudUploadOutlinedIcon />}>
+      Upload
       <input hidden type="file" accept=".csv,.json,application/json,text/csv" onChange={handleChange} />
     </Button>
   );

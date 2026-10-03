@@ -1,6 +1,9 @@
 import {
-  Box, Divider, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography, Button, Tabs, Tab
+  Box, Divider, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Tabs, Tab
 } from '@mui/material';
+import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
+import PaletteOutlinedIcon from '@mui/icons-material/PaletteOutlined';
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import { useState } from 'react';
 import type { AggregationType, WidgetConfig } from '../../entities/widget/types';
 import { useDashboardStore } from '../../store/dashboardStore';
@@ -20,66 +23,61 @@ function FieldSelect({
   );
 }
 
-type SideTab = 'widget' | 'filters';
+type SideTab = 'widget' | 'style' | 'filters';
 
 export function RightSidebar() {
   const [tab, setTab] = useState<SideTab>('widget');
 
   const widgets = useDashboardStore((s) => s.widgets);
-  const layouts = useDashboardStore((s) => s.layouts);
   const activeWidgetId = useDashboardStore((s) => s.activeWidgetId);
   const updateWidget = useDashboardStore((s) => s.updateWidget);
-  const setLayouts = useDashboardStore((s) => s.setLayouts);
 
   const schema = useDataStore((s) => s.schema);
   const columns = schema?.columns.map((c) => c.key) ?? [];
 
   const active = widgets.find((w) => w.id === activeWidgetId);
-  const activeLayout = layouts.find((l) => l.i === activeWidgetId);
 
   const patch = (p: Partial<WidgetConfig>) => {
     if (!active) return;
     updateWidget(active.id, p);
   };
 
-  const patchLayout = (patch: Partial<{ w: number; h: number }>) => {
-    if (!activeLayout) return;
-    setLayouts(layouts.map((l) => (l.i === activeLayout.i ? { ...l, ...patch } : l)));
-  };
-
   return (
-    <Box className="panel panel--right" p={2}>
+    <Box className="panel" p={1.5}>
       <Tabs value={tab} onChange={(_, v: SideTab) => setTab(v)} sx={{ mb: 1 }}>
-        <Tab label="Widget" value="widget" />
-        <Tab label="Filters" value="filters" />
+        <Tab icon={<TuneOutlinedIcon fontSize="small" />} iconPosition="start" label="Widget" value="widget" />
+        <Tab icon={<PaletteOutlinedIcon fontSize="small" />} iconPosition="start" label="Style" value="style" />
+        <Tab icon={<FilterAltOutlinedIcon fontSize="small" />} iconPosition="start" label="Filters" value="filters" />
       </Tabs>
-      <Divider sx={{ mb: 1.5 }} />
+      <Divider sx={{ mb: 1.25 }} />
 
       {tab === 'filters' && <GlobalFiltersPanel />}
 
+      {tab === 'style' && (
+        <Box sx={{ px: 0.5, color: 'text.secondary', fontSize: 13 }}>
+          Style controls will be added in next iteration.
+        </Box>
+      )}
+
       {tab === 'widget' && (
         <>
-          <Typography variant="subtitle1" fontWeight={700}>Widget Settings</Typography>
-          <Divider sx={{ my: 1.5 }} />
-
           {!active ? (
-            <Typography variant="body2" color="text.secondary">Выбери виджет для настройки.</Typography>
+            <Box sx={{ px: 0.5, color: 'text.secondary', fontSize: 13 }}>
+              Select a widget on canvas.
+            </Box>
           ) : (
-            <Stack spacing={1.5}>
+            <Stack spacing={1.25}>
               <TextField size="small" label="Title" value={active.title} onChange={(e) => patch({ title: e.target.value })} />
-
-              {activeLayout && (
-                <Stack direction="row" spacing={1}>
-                  <TextField size="small" type="number" label="W" value={activeLayout.w} onChange={(e) => patchLayout({ w: Math.max(3, Number(e.target.value) || 3) })} />
-                  <TextField size="small" type="number" label="H" value={activeLayout.h} onChange={(e) => patchLayout({ h: Math.max(3, Number(e.target.value) || 3) })} />
-                </Stack>
-              )}
 
               {active.type === 'kpi' && (
                 <>
                   <FormControl fullWidth size="small">
                     <InputLabel>Aggregation</InputLabel>
-                    <Select label="Aggregation" value={active.aggregation} onChange={(e) => patch({ aggregation: e.target.value as AggregationType })}>
+                    <Select
+                      label="Aggregation"
+                      value={active.aggregation}
+                      onChange={(e) => patch({ aggregation: e.target.value as AggregationType })}
+                    >
                       <MenuItem value="count">count</MenuItem>
                       <MenuItem value="sum">sum</MenuItem>
                       <MenuItem value="avg">avg</MenuItem>
@@ -109,10 +107,6 @@ export function RightSidebar() {
                   <FieldSelect label="Y field" value={active.yField} options={columns} onChange={(v) => patch({ yField: v })} />
                 </>
               )}
-
-              <Button variant="outlined" onClick={() => setLayouts(layouts.map((l) => ({ ...l, w: 4, h: 4 })))}>
-                Normalize widget sizes
-              </Button>
             </Stack>
           )}
         </>

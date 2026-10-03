@@ -1,19 +1,19 @@
-import { AppBar, Toolbar, Button, Stack, Chip, Tooltip } from '@mui/material';
+import { AppBar, Box, Button, Chip, Stack, Toolbar, Tooltip } from '@mui/material';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DownloadDoneOutlinedIcon from '@mui/icons-material/DownloadDoneOutlined';
 import RestartAltOutlinedIcon from '@mui/icons-material/RestartAltOutlined';
+import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
+import { BrandLogo } from '../BrandLogo';
+import { ThemeToggle } from '../ThemeToggle';
+import { FileUploadButton } from '../../../features/data-import/ui/FileUploadButton';
+import { useDataStore } from '../../../store/dataStore';
+import { useDashboardStore } from '../../../store/dashboardStore';
+import { useFiltersStore } from '../../../store/filtersStore';
+import { useUiStore } from '../../../store/uiStore';
+import { loadDashboardFromStorage, saveDashboardToStorage, clearDashboardStorage } from '../../../features/persistence/lib/storage';
+import type { DashboardConfig } from '../../../entities/dashboard/types';
 
-import { FileUploadButton } from '../../features/data-import/ui/FileUploadButton';
-import { ThemeToggle } from './ThemeToggle';
-import { BrandLogo } from './BrandLogo';
-import { useDataStore } from '../../store/dataStore';
-import { useUiStore } from '../../store/uiStore';
-import { useDashboardStore } from '../../store/dashboardStore';
-import { useFiltersStore } from '../../store/filtersStore';
-import { loadDashboardFromStorage, saveDashboardToStorage, clearDashboardStorage } from '../../features/persistence/lib/storage';
-import type { DashboardConfig } from '../../entities/dashboard/types';
-
-export function Header() {
+export function TopNav() {
   const clearData = useDataStore((s) => s.clear);
   const rowCount = useDataStore((s) => s.rows.length);
 
@@ -51,38 +51,31 @@ export function Header() {
   };
 
   return (
-    <AppBar
-      position="sticky"
-      color="inherit"
-      elevation={0}
-      sx={(t) => ({
-        borderBottom: `1px solid ${t.palette.divider}`,
-        background: t.palette.mode === 'dark' ? 'rgba(10,16,32,.68)' : 'rgba(255,255,255,.66)',
-        backdropFilter: 'blur(10px)',
-      })}
-    >
-      <Toolbar sx={{ justifyContent: 'space-between', minHeight: 66 }}>
+    <AppBar position="sticky" color="inherit" elevation={0} className="gpv2-topnav">
+      <Toolbar sx={{ minHeight: 66, justifyContent: 'space-between' }}>
         <Stack direction="row" spacing={1.5} alignItems="center">
           <BrandLogo />
-          <Chip size="small" label={`Rows: ${rowCount}`} />
-          <Chip size="small" label={`Widgets: ${widgets.length}`} />
-          <Chip size="small" label={`Filters: ${filters.length}`} />
+          <Chip size="small" label={`Rows ${rowCount}`} />
+          <Chip size="small" label={`Widgets ${widgets.length}`} />
+          <Chip size="small" label={`Filters ${filters.length}`} />
         </Stack>
 
         <Stack direction="row" spacing={1} alignItems="center">
           <ThemeToggle />
           <FileUploadButton />
-          <Tooltip title="Load saved configuration">
-            <Button variant="outlined" startIcon={<DownloadDoneOutlinedIcon />} onClick={onLoad}>Load</Button>
-          </Tooltip>
-          <Tooltip title="Save current configuration">
-            <Button variant="contained" startIcon={<SaveOutlinedIcon />} onClick={onSave}>Save</Button>
-          </Tooltip>
-          <Tooltip title="Reset all workspace data">
-            <Button color="error" variant="text" startIcon={<RestartAltOutlinedIcon />} onClick={onReset}>Reset</Button>
+          <Button variant="outlined" startIcon={<DownloadDoneOutlinedIcon />} onClick={onLoad}>Load</Button>
+          <Button variant="contained" startIcon={<SaveOutlinedIcon />} onClick={onSave}>Save</Button>
+          <Button color="error" variant="text" startIcon={<RestartAltOutlinedIcon />} onClick={onReset}>Reset</Button>
+          <Tooltip title="Coming soon: AI layout assistant">
+            <span>
+              <Button variant="outlined" startIcon={<AutoAwesomeOutlinedIcon />} disabled>
+                AI Arrange
+              </Button>
+            </span>
           </Tooltip>
         </Stack>
       </Toolbar>
+      <Box className="gpv2-topnav-border" />
     </AppBar>
   );
 }
